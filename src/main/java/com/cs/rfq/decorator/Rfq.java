@@ -26,8 +26,8 @@ public class Rfq implements Serializable {
         
         createRfqFromJson.setId(jsonObject.has("id") ? jsonObject.get("id").getAsString() : null);
         createRfqFromJson.setEntityId(jsonObject.has("entityId") ? jsonObject.get("entityId").getAsLong() : null);
-        createRfqFromJson.setIsin(jsonObject.has("instrumentID") ? jsonObject.get("isin").getAsString() : null);
-        createRfqFromJson.setQuantity(jsonObject.has("qty") ? jsonObject.get("quantity").getAsLong() : null);
+        createRfqFromJson.setIsin(jsonObject.has("instrumentId") ? jsonObject.get("instrumentId").getAsString() : null);
+        createRfqFromJson.setQuantity(jsonObject.has("qty") ? jsonObject.get("qty").getAsLong() : null);
         createRfqFromJson.setPrice(jsonObject.has("price") ? jsonObject.get("price").getAsDouble() : null);
         createRfqFromJson.setSide(jsonObject.has("side") ? jsonObject.get("side").getAsString() : null);
         createRfqFromJson.setTraderId(jsonObject.has("traderId") ? jsonObject.get("traderId").getAsLong() : null);

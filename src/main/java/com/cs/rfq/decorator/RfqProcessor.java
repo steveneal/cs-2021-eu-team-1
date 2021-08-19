@@ -49,12 +49,20 @@ public class RfqProcessor {
         JavaDStream<String> lines = streamingContext.socketTextStream("localhost",9000);
 
         //TODO: convert each incoming line to a Rfq object and call processRfq method with it
-        JavaDStream<String> words = lines.flatMap(x -> Arrays.asList(x.split(" ")).iterator());
+        //JavaDStream<String> words = lines.flatMap(x -> Arrays.asList(x.split(" ")).iterator());
+        JavaDStream<Rfq> rfqs = lines.flatMap(x -> Arrays.asList(Rfq.fromJson(x)).iterator());
 
         //print out the results
-        words.foreachRDD(rdd -> {
+        //words.foreachRDD(rdd -> {
+        //    rdd.collect().forEach(System.out::println);
+        //});
+
+        rfqs.foreachRDD(rdd -> {
             rdd.collect().forEach(System.out::println);
         });
+
+        //System.out.println(rfq.toString());
+
         //TODO: start the streaming context
         streamingContext.start();
         streamingContext.awaitTermination();
