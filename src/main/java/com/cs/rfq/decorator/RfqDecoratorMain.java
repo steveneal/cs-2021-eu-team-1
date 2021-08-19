@@ -13,23 +13,14 @@ public class RfqDecoratorMain {
 
         //TODO: create a Spark configuration and set a sensible app name
         SparkConf conf = new SparkConf().setAppName("RFQDecorator");
-                // or
-        //        SparkConf conf = new SparkConf()
-        //             .setMaster("local[*]")
-        //             .setAppName("RFQDecorator");
-
 
         //TODO: create a Spark streaming context
         JavaStreamingContext jssc = new JavaStreamingContext(conf, Durations.seconds(5));
+
         //TODO: create a Spark session
-        SparkSession session = SparkSession.builder()
-                .appName("RFQDecorator")
-                .getOrCreate();
+        SparkSession session = SparkSession.builder().config(conf).getOrCreate();
+
         //TODO: create a new RfqProcessor and set it listening for incoming RFQs
-
-
-        session = SparkSession.builder().config(conf).getOrCreate();
-
         RfqProcessor processor = new RfqProcessor(session, jssc);
         processor.startSocketListener();
     }
