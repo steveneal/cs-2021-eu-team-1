@@ -2,6 +2,7 @@
 *.iml
 /target/
 
+# using vscode to test
 .vscode
 .settings
 .classpath
