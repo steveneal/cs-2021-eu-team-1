@@ -2,6 +2,8 @@ package com.cs.rfq.decorator;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 import java.io.Serializable;
 import java.lang.reflect.Type;
@@ -18,7 +20,19 @@ public class Rfq implements Serializable {
 
     public static Rfq fromJson(String json) {
         //TODO: build a new RFQ setting all fields from data passed in the RFQ json message
-        return null;
+        Rfq createRfqFromJson = new Rfq();
+        
+        JsonObject jsonObject = (new JsonParser()).parse(json).getAsJsonObject();
+        
+        createRfqFromJson.setId(jsonObject.has("id") ? jsonObject.get("id").getAsString() : null);
+        createRfqFromJson.setEntityId(jsonObject.has("entityId") ? jsonObject.get("entityId").getAsLong() : null);
+        createRfqFromJson.setIsin(jsonObject.has("instrumentID") ? jsonObject.get("isin").getAsString() : null);
+        createRfqFromJson.setQuantity(jsonObject.has("qty") ? jsonObject.get("quantity").getAsLong() : null);
+        createRfqFromJson.setPrice(jsonObject.has("price") ? jsonObject.get("price").getAsDouble() : null);
+        createRfqFromJson.setSide(jsonObject.has("side") ? jsonObject.get("side").getAsString() : null);
+        createRfqFromJson.setTraderId(jsonObject.has("traderId") ? jsonObject.get("traderId").getAsLong() : null);
+        
+        return createRfqFromJson;
     }
 
     @Override
