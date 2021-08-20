@@ -30,14 +30,13 @@ public class AverageTradedPriceExtractorTest extends AbstractSparkUnitTest {
 
     @Test
     public void testCorrectVolumeExtractedGivenInstrument() {
-        InstrumentLiquidityExtractor instLiquidExtractor = new InstrumentLiquidityExtractor();
+        AverageTradedPriceExtractor avgTradedPrice = new AverageTradedPriceExtractor();
 
-        instLiquidExtractor.setSince("2021-08-01");
-        Map<RfqMetadataFieldNames, Object> map = instLiquidExtractor.extractMetaData(rfq, session, trades);
-        Object result = map.get(RfqMetadataFieldNames.totalTradesLiquidity);
-        //results.put(RfqMetadataFieldNames.totalTradesLiquidity, volume);
+        avgTradedPrice.setSince("2021-08-01");
+        Map<RfqMetadataFieldNames, Object> map = avgTradedPrice.extractMetaData(rfq, session, trades);
+        Object result = map.get(RfqMetadataFieldNames.averageTradedPricePastWeek);
 
-        assertEquals(850_000L, result);
+        assertEquals(139.857, result);
     }
 
 }
