@@ -51,18 +51,11 @@ public class RfqProcessor {
 
         //TODO: convert each incoming line to a Rfq object and call processRfq method with it
         //JavaDStream<String> words = lines.flatMap(x -> Arrays.asList(x.split(" ")).iterator());
-        JavaDStream<Rfq> rfqs = lines.flatMap(x -> Arrays.asList(Rfq.fromJson(x)).iterator());
-
-        //print out the results
-        //words.foreachRDD(rdd -> {
-        //    rdd.collect().forEach(System.out::println);
-        //});
+        JavaDStream<Rfq> rfqs = lines.map(json -> Rfq.fromJson(json));
 
         rfqs.foreachRDD(rdd -> {
-            rdd.collect().forEach(System.out::println);
+            rdd.collect().forEach(rfq -> processRfq(rfq));
         });
-
-        //System.out.println(rfq.toString());
 
         //TODO: start the streaming context
         streamingContext.start();
