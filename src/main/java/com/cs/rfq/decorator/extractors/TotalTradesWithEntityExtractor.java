@@ -11,6 +11,9 @@ import java.util.Map;
 
 import static com.cs.rfq.decorator.extractors.RfqMetadataFieldNames.*;
 
+/*
+User Story : Total Volume Traded for Instrument (1)
+ */
 public class TotalTradesWithEntityExtractor implements RfqMetadataExtractor {
 
     @Override

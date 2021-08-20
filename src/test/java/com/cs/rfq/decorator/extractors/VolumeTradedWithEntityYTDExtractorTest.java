@@ -45,7 +45,11 @@ public class VolumeTradedWithEntityYTDExtractorTest extends AbstractSparkUnitTes
     public void checkVolumeLastMonth() {
         String filePath = getClass().getResource("volume-traded-2.json").getPath();
         trades = new TradeDataLoader().loadTrades(session, filePath);
+
         VolumeTradedWithEntityYTDExtractor extractor = new VolumeTradedWithEntityYTDExtractor();
+
+        extractor.setSince("2021-08-11");
+
         Map<RfqMetadataFieldNames, Object> meta = extractor.extractMetaData(rfq, session, trades);
 
         Object result = meta.get(RfqMetadataFieldNames.volumeTradedMonthToDate);
@@ -60,9 +64,9 @@ public class VolumeTradedWithEntityYTDExtractorTest extends AbstractSparkUnitTes
 
         VolumeTradedWithEntityYTDExtractor extractor = new VolumeTradedWithEntityYTDExtractor();
         Map<RfqMetadataFieldNames, Object> meta = extractor.extractMetaData(rfq, session, trades);
-
-        Object result = meta.get(RfqMetadataFieldNames.volumeTradedMonthToDate);
-        assertEquals(850_000L, result);
+        //extractor.setSince();
+        Object result = meta.get(RfqMetadataFieldNames.volumeTradedWeekToDate);
+        assertEquals(500_000L, result);
     }
 
 
