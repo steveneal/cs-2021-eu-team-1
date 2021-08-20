@@ -3,6 +3,11 @@ package com.cs.rfq.utils;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.*;
+
+
+
+// import org.apache.spark.deploy.Command;
 
 /**
  * Simple chat server capable of sending and receiving String lines on separate in/out port numbers.
@@ -11,6 +16,9 @@ public class ChatterboxServer {
 
     public static final int SERVER_PORT_OUT = 9000;
     public static final int SERVER_PORT_IN = 9001;
+
+    private static ArrayList<String> commands = new ArrayList<String>();
+
 
     //thread for sending keyboard input to SERVER_PORT_OUT
     private static Thread rfqSenderOutputThread;
@@ -79,16 +87,40 @@ public class ChatterboxServer {
                 do {
                     //naive polling of System.in to check for input and allow thread to be interrupted
                     if (System.in.available() > 0) {
-                        String line = in.readLine();
-                        out.println(line);
-                        out.flush();
-                        log("sent", line);
-                    }  else {
+
+                        String line = in.readLine();                       
+
+                        log("command: ", line);
+
+                        if(line.startsWith("-r")){
+                            int index = Integer.parseInt(line.split(" ")[1]);
+
+                            if(index >= 0 && index < commands.size()){
+                                
+                                out.println(commands.get(index));
+                                log("output: ", commands.get(index));
+                                
+                            } 
+                            else{
+                                
+                                log("recent input index out of bounds");
+                            }
+                        }
+                        else{
+
+                            commands.add(line);
+                            out.println(line);
+                            out.flush();
+                            log("sent");
+                        }
+                    
+                    } else {
                         Thread.sleep(500);
                     }
                 } while (true);
 
             } catch (InterruptedException e) {
+                System.out.println(e.getMessage());
                 log("connection closed by server");
             } catch (Exception e) {
                 e.printStackTrace();
