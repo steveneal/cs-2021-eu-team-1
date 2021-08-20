@@ -47,7 +47,8 @@ public class TradeDataLoader {
                 new StructField("LastQty", LongType, false, Metadata.empty()),
                 new StructField("LastPx", DoubleType, false, Metadata.empty()),
                 new StructField("TradeDate", DateType, false, Metadata.empty()),
-                new StructField("Currency", StringType, false, Metadata.empty())
+                new StructField("Currency", StringType, false, Metadata.empty()),
+                new StructField("Side", IntegerType, false, Metadata.empty()),
         });
 
         //TODO: load the trades dataset
