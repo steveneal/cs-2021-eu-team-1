@@ -17,7 +17,7 @@ public class AverageTradedPriceExtractor implements RfqMetadataExtractor {
     private String since;
 
     public AverageTradedPriceExtractor() {
-        this.since = DateTime.now().minusWeeks(1).toString();
+        this.since = DateTime.now().minusWeeks(1).toString("yyyy-MM-dd");
     }
     @Override
     public Map<RfqMetadataFieldNames, Object> extractMetaData(Rfq rfq, SparkSession session, Dataset<Row> trades) {

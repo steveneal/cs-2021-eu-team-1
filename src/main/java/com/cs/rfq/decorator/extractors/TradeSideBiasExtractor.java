@@ -17,8 +17,8 @@ public class TradeSideBiasExtractor implements RfqMetadataExtractor {
     private ArrayList<String> sinceDates = new ArrayList<String>();
 
     public TradeSideBiasExtractor() {
-        this.sinceDates.add(DateTime.now().minusWeeks(1).toString());
-        this.sinceDates.add(DateTime.now().minusMonths(1).toString());
+        this.sinceDates.add(DateTime.now().minusWeeks(1).toString("yyyy-MM-dd"));
+        this.sinceDates.add(DateTime.now().minusMonths(1).toString("yyyy-MM-dd"));
     }
 
     @Override
