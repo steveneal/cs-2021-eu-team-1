@@ -11,4 +11,5 @@ public enum RfqMetadataFieldNames {
     volumeTradedYearToDate,
     volumeTradedMonthToDate,
     volumeTradedWeekToDate,
+    averageTradedPricePastWeek
 }
