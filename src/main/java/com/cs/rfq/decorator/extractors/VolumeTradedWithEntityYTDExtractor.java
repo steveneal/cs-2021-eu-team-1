@@ -6,6 +6,7 @@ import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SparkSession;
 import org.joda.time.DateTime;
 
+import java.sql.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -38,10 +39,12 @@ public class VolumeTradedWithEntityYTDExtractor implements RfqMetadataExtractor 
     public Map<RfqMetadataFieldNames, Object> extractMetaData(Rfq rfq, SparkSession session, Dataset<Row> trades) {
         long todayMs = DateTime.now().withMillisOfDay(0).getMillis();
         long pastWeekMs = DateTime.now().withMillis(todayMs).minusWeeks(1).getMillis();
+        long pastMonths = DateTime.now().withMillis(todayMs).minusMonths(1).getMillis();
+
         String[] sinceDates = {
                 since,
-                DateTime.now().getYear() + "-" + DateTime.now().getMonthOfYear() + "-01",
-                new java.sql.Date(pastWeekMs).toString()
+                new Date(pastMonths).toString(),
+                new Date(pastWeekMs).toString()
         };
 
         Map<RfqMetadataFieldNames, Object> results = new HashMap<>();
@@ -55,3 +58,4 @@ public class VolumeTradedWithEntityYTDExtractor implements RfqMetadataExtractor 
         this.since = since;
     }
 }
+
