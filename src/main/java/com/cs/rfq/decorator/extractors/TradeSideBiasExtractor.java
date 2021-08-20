@@ -1,6 +1,7 @@
 package com.cs.rfq.decorator.extractors;
 
 import com.cs.rfq.decorator.Rfq;
+import org.apache.spark.sql.Column;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SparkSession;
@@ -27,16 +28,21 @@ public class TradeSideBiasExtractor implements RfqMetadataExtractor {
         ArrayList<Double> tradeBiasList = new ArrayList<>();
 
         for (String sinceVar : sinceDates){
-            String query = String.format("SELECT sum(LastQty) from trade where EntityId='%s' AND SecurityId='%s' AND Side=1 AND TradeDate >= '%s' UNION ALL SELECT sum(LastQty) from trade where EntityId='%s' AND SecurityId='%s' AND Side=2 AND TradeDate >= '%s'",
+            String queryBuy = String.format("SELECT sum(LastQty) from trade where EntityId='%s' AND SecurityId='%s' AND Side=1 AND TradeDate >= '%s'",
+                    rfq.getEntityId(),
+                    rfq.getIsin(),
+                    sinceVar);
+            String querySell = String.format("SELECT sum(LastQty) from trade where EntityId='%s' AND SecurityId='%s' AND Side=2 AND TradeDate >= '%s'",
                     rfq.getEntityId(),
                     rfq.getIsin(),
                     sinceVar);
 
             trades.createOrReplaceTempView("trade");
-            Dataset<Row> sqlQueryResults = session.sql(query);
+            Dataset<Row> sqlQueryResultsBuy = session.sql(queryBuy);
+            Dataset<Row> sqlQueryResultsSell = session.sql(querySell);
 
-            Object tradeBiasBuy = sqlQueryResults.first().get(0) == null ? -1.0 : sqlQueryResults.first().get(0);
-            Object tradeBiasSell = sqlQueryResults.first().get(1) == null ? -1.0 : sqlQueryResults.first().get(1);
+            Object tradeBiasBuy = sqlQueryResultsBuy.first().get(0) == null ? -1.0 : sqlQueryResultsBuy.first().get(0);
+            Object tradeBiasSell = sqlQueryResultsSell.first().get(0) == null ? -1.0 : sqlQueryResultsSell.first().get(0);
 
             tradeBiasList.add((double)tradeBiasBuy / (double)tradeBiasSell);
         }
