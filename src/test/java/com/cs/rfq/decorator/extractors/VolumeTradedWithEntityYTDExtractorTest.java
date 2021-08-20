@@ -54,6 +54,19 @@ public class VolumeTradedWithEntityYTDExtractorTest extends AbstractSparkUnitTes
 
 
     @Test
+    public void checkVolumeLastWeek() {
+        String filePath = getClass().getResource("volume-traded-2.json").getPath();
+        trades = new TradeDataLoader().loadTrades(session, filePath);
+
+        VolumeTradedWithEntityYTDExtractor extractor = new VolumeTradedWithEntityYTDExtractor();
+        Map<RfqMetadataFieldNames, Object> meta = extractor.extractMetaData(rfq, session, trades);
+
+        Object result = meta.get(RfqMetadataFieldNames.volumeTradedMonthToDate);
+        assertEquals(850_000L, result);
+    }
+
+
+    @Test
     public void checkVolumeWhenNoTradesMatch() {
 
         //all test trade data are for 2018 so this will cause no matches
