@@ -22,6 +22,7 @@ public class VolumeTradedWithEntityYTDExtractorTest extends AbstractSparkUnitTes
         rfq.setEntityId(5561279226039690843L);
         rfq.setIsin("AT0000A0VRQ6");
 
+
         String filePath = getClass().getResource("volume-traded-1.json").getPath();
         trades = new TradeDataLoader().loadTrades(session, filePath);
     }
@@ -39,6 +40,36 @@ public class VolumeTradedWithEntityYTDExtractorTest extends AbstractSparkUnitTes
         assertEquals(1_350_000L, result);
     }
 
+
+    @Test
+    public void checkVolumeLastMonth() {
+        String filePath = getClass().getResource("volume-traded-2.json").getPath();
+        trades = new TradeDataLoader().loadTrades(session, filePath);
+
+        VolumeTradedWithEntityYTDExtractor extractor = new VolumeTradedWithEntityYTDExtractor();
+
+        extractor.setSince("2021-08-11");
+
+        Map<RfqMetadataFieldNames, Object> meta = extractor.extractMetaData(rfq, session, trades);
+
+        Object result = meta.get(RfqMetadataFieldNames.volumeTradedMonthToDate);
+        assertEquals(850_000L, result);
+    }
+
+
+    @Test
+    public void checkVolumeLastWeek() {
+        String filePath = getClass().getResource("volume-traded-2.json").getPath();
+        trades = new TradeDataLoader().loadTrades(session, filePath);
+
+        VolumeTradedWithEntityYTDExtractor extractor = new VolumeTradedWithEntityYTDExtractor();
+        Map<RfqMetadataFieldNames, Object> meta = extractor.extractMetaData(rfq, session, trades);
+        //extractor.setSince();
+        Object result = meta.get(RfqMetadataFieldNames.volumeTradedWeekToDate);
+        assertEquals(500_000L, result);
+    }
+
+
     @Test
     public void checkVolumeWhenNoTradesMatch() {
 
@@ -54,3 +85,4 @@ public class VolumeTradedWithEntityYTDExtractorTest extends AbstractSparkUnitTes
     }
 
 }
+

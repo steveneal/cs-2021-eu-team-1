@@ -19,14 +19,19 @@ public class AverageTradedPriceExtractor implements RfqMetadataExtractor {
     public AverageTradedPriceExtractor() {
         this.since = DateTime.now().minusWeeks(1).toString("yyyy-MM-dd");
     }
+
+
     @Override
     public Map<RfqMetadataFieldNames, Object> extractMetaData(Rfq rfq, SparkSession session, Dataset<Row> trades) {
 
-        String query = String.format("SELECT avg(LastPx) from trade where EntityId='%s' AND SecurityId='%s' AND TradeDate >= '%s'",
-                rfq.getEntityId(),
+//        String query = String.format("SELECT avg(LastPx) from trade where EntityId='%s' AND SecurityId='%s' AND TradeDate >= '%s'",
+//                rfq.getEntityId(),
+//                rfq.getIsin(),
+//                since);
+
+        String query = String.format("SELECT avg(LastPx) from trade where SecurityId='%s' AND TradeDate >= '%s'",
                 rfq.getIsin(),
                 since);
-
         trades.createOrReplaceTempView("trade");
         Dataset<Row> sqlQueryResults = session.sql(query);
 
@@ -38,5 +43,9 @@ public class AverageTradedPriceExtractor implements RfqMetadataExtractor {
         Map<RfqMetadataFieldNames, Object> results = new HashMap<>();
         results.put(averageTradedPricePastWeek, averageTradePrice);
         return results;
+    }
+
+    public void setSince(String since) {
+        this.since = since;
     }
 }
