@@ -31,7 +31,7 @@ public class VolumeTradedWithEntityYTDExtractorTest extends AbstractSparkUnitTes
     public void checkVolumeWhenAllTradesMatch() {
 
         VolumeTradedWithEntityYTDExtractor extractor = new VolumeTradedWithEntityYTDExtractor();
-        extractor.setSince("2018-01-01");
+        extractor.setSince("2019-01-01");
 
         Map<RfqMetadataFieldNames, Object> meta = extractor.extractMetaData(rfq, session, trades);
 
@@ -63,10 +63,11 @@ public class VolumeTradedWithEntityYTDExtractorTest extends AbstractSparkUnitTes
         trades = new TradeDataLoader().loadTrades(session, filePath);
 
         VolumeTradedWithEntityYTDExtractor extractor = new VolumeTradedWithEntityYTDExtractor();
+        extractor.setSince("2021-08-09");
         Map<RfqMetadataFieldNames, Object> meta = extractor.extractMetaData(rfq, session, trades);
         //extractor.setSince();
         Object result = meta.get(RfqMetadataFieldNames.volumeTradedWeekToDate);
-        assertEquals(500_000L, result);
+        assertEquals(850_000L, result);
     }
 
 
@@ -75,7 +76,7 @@ public class VolumeTradedWithEntityYTDExtractorTest extends AbstractSparkUnitTes
 
         //all test trade data are for 2018 so this will cause no matches
         VolumeTradedWithEntityYTDExtractor extractor = new VolumeTradedWithEntityYTDExtractor();
-        extractor.setSince("2019-01-01");
+        extractor.setSince("2021-01-01");
 
         Map<RfqMetadataFieldNames, Object> meta = extractor.extractMetaData(rfq, session, trades);
 

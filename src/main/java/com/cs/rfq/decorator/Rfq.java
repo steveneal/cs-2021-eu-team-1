@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.google.gson.stream.JsonReader;
 
 import java.io.Serializable;
 import java.lang.reflect.Type;
@@ -23,7 +24,7 @@ public class Rfq implements Serializable {
         Rfq createRfqFromJson = new Rfq();
         
         JsonObject jsonObject = (new JsonParser()).parse(json).getAsJsonObject();
-        
+
         createRfqFromJson.setId(jsonObject.has("id") ? jsonObject.get("id").getAsString() : null);
         createRfqFromJson.setEntityId(jsonObject.has("entityId") ? jsonObject.get("entityId").getAsLong() : null);
         createRfqFromJson.setIsin(jsonObject.has("instrumentId") ? jsonObject.get("instrumentId").getAsString() : null);

@@ -234,12 +234,13 @@ public class RfqProcessor {
 
         List<StructField> listOfFields = new ArrayList<>();
         listOfFields.add(fields[0]);
-        listOfFields.add(fields[1]);
+        //listOfFields.add(fields[1]);
         StructType structType = DataTypes.createStructType(listOfFields);
 
         Dataset<Row> metaSet = session.createDataFrame(list, structType);
         //metaSet.
         metaSet.show();
+        metaSet.writeStream();
         //Dataset<Row> trades = session.read().schema(schema).json(path)
     }
 

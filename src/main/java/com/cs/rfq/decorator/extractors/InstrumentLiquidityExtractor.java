@@ -6,6 +6,7 @@ import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SparkSession;
 import org.joda.time.DateTime;
 
+import java.time.format.DateTimeParseException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,7 +15,8 @@ public class InstrumentLiquidityExtractor implements RfqMetadataExtractor {
     private String since;
 
     public InstrumentLiquidityExtractor() {
-        this.since = DateTime.now().getYear() + "-" + DateTime.now().getMonthOfYear() + "-01";
+        //this.since = DateTime.now().getYear() + "-" + DateTime.now().getMonthOfYear() + "-01";
+        this.since = DateTime.now().minusMonths(1).toString("yyyy-MM-dd");
     }
 
     @Override

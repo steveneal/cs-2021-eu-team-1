@@ -8,6 +8,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 
+import java.util.Map;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
@@ -21,6 +23,7 @@ public class TradeSideBiasExtractorTest extends AbstractSparkUnitTest {
     public void setup() {
         rfq = new Rfq();
         rfq.setIsin("AT0000A0VRQ6");
+        rfq.setEntityId(5561279226039690841L);
 
         String filePath = getClass().getResource("volume-traded-3.json").getPath();
         trades = new TradeDataLoader().loadTrades(session, filePath);
@@ -29,13 +32,13 @@ public class TradeSideBiasExtractorTest extends AbstractSparkUnitTest {
 
     @Test
     public void test() {
-        TradeSideBiasExtractorTest extractor = new TradeSideBiasExtractorTest();
+        TradeSideBiasExtractor extractor = new TradeSideBiasExtractor();
 
-//        avgTradedPrice.setSince("2021-08-01");
-//        Map<RfqMetadataFieldNames, Object> map = avgTradedPrice.extractMetaData(rfq, session, trades);
-//        Object result = map.get(RfqMetadataFieldNames.averageTradedPricePastWeek);
+        extractor.setSince("2018-08-01");
+        Map<RfqMetadataFieldNames, Object> map = extractor.extractMetaData(rfq, session, trades);
+        Object result = map.get(RfqMetadataFieldNames.buySellRatioPastWeek);
 
-        assertEquals(1, 1);
+        assertEquals("-1/-1", result);
     }
 
 }
