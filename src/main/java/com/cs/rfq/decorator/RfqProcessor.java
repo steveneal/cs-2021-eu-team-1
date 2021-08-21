@@ -14,17 +14,9 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.common.serialization.StringDeserializer;
-import org.apache.kafka.common.utils.Bytes;
-//import org.apache.kafka.streams.KafkaStreams;
-//import org.apache.kafka.streams.StreamsBuilder;
-//import org.apache.kafka.streams.StreamsConfig;
-//import org.apache.kafka.streams.kstream.KStream;
-//import org.apache.kafka.streams.kstream.KTable;
-//import org.apache.kafka.streams.kstream.Materialized;
-//import org.apache.kafka.streams.kstream.Produced;
-//import org.apache.kafka.streams.state.KeyValueStore;
-import org.apache.spark.api.java.JavaPairRDD;
+
 import org.apache.spark.api.java.JavaRDD;
+import org.apache.spark.api.java.function.Function;
 import org.apache.spark.api.java.function.VoidFunction;
 import org.apache.spark.rdd.RDD;
 import org.apache.spark.sql.Dataset;
@@ -53,7 +45,6 @@ import java.net.UnknownHostException;
 import java.sql.Date;
 import java.util.*;
 
-import static org.apache.spark.sql.functions.sum;
 import static org.apache.spark.sql.types.DataTypes.*;
 import static org.apache.spark.sql.types.DataTypes.IntegerType;
 
@@ -118,10 +109,23 @@ public class RfqProcessor {
                         ConsumerStrategies.<String, String>Subscribe(topics, kafkaParams)
                 );
 
-        JavaPairDStream<String, String> tuples = stream.mapToPair(record ->
-                new Tuple2<>(record.key(), record.value()));
+//        JavaPairDStream<String, String> tuples = stream.mapToPair(record ->
+//                new Tuple2<>(record.key(), record.value()));
 
         JavaDStream<String> jsonStream = stream.map(elt -> elt.value());
+
+        // value : {ad: 123, }
+
+        // createRfq(val) -> RFQ
+
+        // processRfq(RFQ) -> Map<RfqMetaDataFieldName, Object>
+
+        // jsonString(Map<RfqMetaDataFieldName, Object>) -> JsonString
+
+        // publishToKafka(JsonString)
+
+
+
 
         jsonStream.foreachRDD(new VoidFunction<JavaRDD<String>>() {
             @Override
@@ -130,6 +134,17 @@ public class RfqProcessor {
                 stringJavaRDD.collect().forEach(json -> processRfq(Rfq.fromJson(json)));
             }
         });
+
+
+        JavaDStream<String> ss = jsonStream.map(new Function<String, String>() {
+            @Override
+            public String call(String s) throws Exception {
+                return null;
+            }
+        });
+
+
+        //session.createDataFrame(ss.)
 
 
         //KafkaProducer<String, String> producer =
@@ -225,12 +240,7 @@ public class RfqProcessor {
         list.add(RowFactory.create(s));
         //list.add(RowFactory.create("two"));
 
-
-
         //session.createDataFrame()
-
-
-
 
         List<StructField> listOfFields = new ArrayList<>();
         listOfFields.add(fields[0]);
@@ -238,6 +248,21 @@ public class RfqProcessor {
         StructType structType = DataTypes.createStructType(listOfFields);
 
         Dataset<Row> metaSet = session.createDataFrame(list, structType);
+
+        //metaSet.writeStream()
+        
+//        try {
+//            metaSet.writeStream()
+//                    .format("kafka")
+//                    .outputMode("append")
+//                    .option("kafka.bootstrap.servers", "localhost:9092")
+//                    .option("topic", "streams-wordcount-output")
+//                    .start()
+//                    .awaitTermination();
+//        } catch (StreamingQueryException e) {
+//            e.printStackTrace();
+//        }
+
         //metaSet.
         metaSet.show();
         metaSet.writeStream();
