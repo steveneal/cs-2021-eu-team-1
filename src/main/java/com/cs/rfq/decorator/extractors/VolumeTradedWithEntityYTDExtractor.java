@@ -1,10 +1,13 @@
 package com.cs.rfq.decorator.extractors;
 
 import com.cs.rfq.decorator.Rfq;
+import org.apache.spark.api.java.function.MapFunction;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
+import org.apache.spark.sql.SQLContext;
 import org.apache.spark.sql.SparkSession;
 import org.joda.time.DateTime;
+import scala.Function1;
 
 import java.sql.Date;
 import java.text.ParseException;
@@ -56,9 +59,6 @@ public class VolumeTradedWithEntityYTDExtractor implements RfqMetadataExtractor 
                     rfq.getIsin(),
                     sinceVar);
 
-            System.out.println("============= ERROR ============");
-            System.out.println(trades);
-            System.out.println();
             trades.createOrReplaceTempView("trade");
             Dataset<Row> sqlQueryResults = session.sql(query);
 

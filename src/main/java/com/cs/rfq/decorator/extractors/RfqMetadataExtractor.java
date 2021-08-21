@@ -4,8 +4,9 @@ import com.cs.rfq.decorator.Rfq;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SparkSession;
+import scala.Serializable;
 
-import java.io.Serializable;
+
 import java.util.Map;
 
 /**
