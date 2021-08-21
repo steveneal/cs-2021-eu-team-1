@@ -7,6 +7,7 @@ import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SparkSession;
 import org.joda.time.DateTime;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,9 +31,24 @@ public class TotalTradesWithEntityExtractor implements RfqMetadataExtractor {
         long pastWeekMs = DateTime.parse(since).withMillis(todayMs).minusWeeks(1).getMillis();
         long pastYearMs = DateTime.parse(since).withMillis(todayMs).minusYears(1).getMillis();
 
+
+        System.out.println("+++++++ INSIDE EXTRACTOR BEFORE +++++++");
+        System.out.println(trades);
+        System.out.println();
+
         Dataset<Row> filtered = trades
                 .filter(trades.col("SecurityId").equalTo(rfq.getIsin()))
                 .filter(trades.col("EntityId").equalTo(rfq.getEntityId()));
+
+        System.out.println("+++++++ INSIDE EXTRACTOR AFTER +++++++");
+        System.out.println("trades");
+        System.out.println(trades);
+        System.out.println();
+        System.out.println("filtered");
+        System.out.println(filtered);
+        System.out.println();
+        System.out.println(filtered.filter(trades.col("TradeDate").$greater(new java.sql.Date(todayMs))).count());
+
 
         long tradesToday = filtered.filter(trades.col("TradeDate").$greater(new java.sql.Date(todayMs))).count();
         long tradesPastWeek = filtered.filter(trades.col("TradeDate").$greater(new java.sql.Date(pastWeekMs))).count();

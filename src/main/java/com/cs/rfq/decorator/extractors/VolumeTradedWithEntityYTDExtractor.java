@@ -56,8 +56,12 @@ public class VolumeTradedWithEntityYTDExtractor implements RfqMetadataExtractor 
                     rfq.getIsin(),
                     sinceVar);
 
+            System.out.println("============= ERROR ============");
+            System.out.println(trades);
+            System.out.println();
             trades.createOrReplaceTempView("trade");
             Dataset<Row> sqlQueryResults = session.sql(query);
+
 
             Object volume = sqlQueryResults.first().get(0);
             if (volume == null) {

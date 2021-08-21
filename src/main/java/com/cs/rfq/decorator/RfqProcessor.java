@@ -9,12 +9,17 @@ import com.cs.rfq.decorator.extractors.AverageTradedPriceExtractor;
 import com.cs.rfq.decorator.extractors.TradeSideBiasExtractor;
 import com.cs.rfq.decorator.publishers.MetadataJsonLogPublisher;
 import com.cs.rfq.decorator.publishers.MetadataPublisher;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.GsonBuilder;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.producer.KafkaProducer;
+import org.apache.kafka.clients.producer.ProducerConfig;
+import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.clients.producer.RecordMetadata;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.common.serialization.StringDeserializer;
 
+import org.apache.kafka.common.serialization.StringSerializer;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.function.Function;
 import org.apache.spark.api.java.function.VoidFunction;
@@ -35,26 +40,29 @@ import org.apache.spark.streaming.kafka010.LocationStrategies;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import scala.Tuple2;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.io.Serializable;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.sql.Date;
 import java.util.*;
+import java.util.function.Consumer;
 
 import static org.apache.spark.sql.types.DataTypes.*;
 import static org.apache.spark.sql.types.DataTypes.IntegerType;
 
-public class RfqProcessor {
+public class RfqProcessor implements Serializable {
 
     private final static Logger log = LoggerFactory.getLogger(RfqProcessor.class);
 
-    private final SparkSession session;
+    private transient final SparkSession session;
 
-    private final JavaStreamingContext streamingContext;
+    private transient final JavaStreamingContext streamingContext;
 
     private Dataset<Row> trades;
 
@@ -68,6 +76,11 @@ public class RfqProcessor {
 
         //TODO: use the TradeDataLoader to load the trade data archives
         this.trades = new TradeDataLoader().loadTrades(this.session, "src/test/resources/trades/trades.json");
+
+
+        System.out.println("======= TRADES NULL ======");
+        System.out.println(trades);
+        System.out.println();
 
         //TODO: take a close look at how these two extractors are implemented
         extractors.add(new TotalTradesWithEntityExtractor());
@@ -124,31 +137,92 @@ public class RfqProcessor {
 
         // publishToKafka(JsonString)
 
+        Map<String, Object> kafkaParamsOut = new HashMap<>();
+        kafkaParamsOut.put("bootstrap.servers", "localhost:9092");
+        kafkaParamsOut.put("key.serializer", StringSerializer.class);
+        kafkaParamsOut.put("value.serializer", StringSerializer.class);
+        kafkaParamsOut.put(ProducerConfig.ACKS_CONFIG, "1");
+        kafkaParamsOut.put(ProducerConfig.CLIENT_ID_CONFIG, "RFQMetaDataProducer");
+        //        props.put("linger.ms", 5);
+        //        props.put("retries", "3");
+
+//        jsonStream.foreachRDD(new VoidFunction<JavaRDD<String>>() {
+//            @Override
+//            public void call(JavaRDD<String> stringRDD) throws Exception {
+//                stringRDD.collect().forEach(new Consumer<String>() {
+//                    @Override
+//                    public void accept(String s) {
+//                        publishToKafka(s,
+//                                1L,
+//                                "metadata_json2",
+//                                kafkaParamsOut);
+//                    }
+//                });
+//            }
+//        });
+//
+//
+
+        // JavaDStream<String> jsonStream;
+
+
+        System.out.println("------- TRADES --------");
+        System.out.println(trades);
+        System.out.println();
+        JavaDStream<Map<RfqMetadataFieldNames, Object>> metaStream = jsonStream
+                .map(new Function<String, Map<RfqMetadataFieldNames, Object>>() {
+                    @Override
+                    public Map<RfqMetadataFieldNames, Object> call(String s) throws Exception {
+                        Map<RfqMetadataFieldNames, Object> meta = fetchMeta(Rfq.fromJson(s));
+                        log.info("Fetching an extractor's metadata", meta);
+                        return meta;
+                    }
+                });
 
 
 
-        jsonStream.foreachRDD(new VoidFunction<JavaRDD<String>>() {
+
+        metaStream.foreachRDD(new VoidFunction<JavaRDD<Map<RfqMetadataFieldNames, Object>>>() {
             @Override
-            public void call(JavaRDD<String> stringJavaRDD) throws Exception {
-                //stringJavaRDD.collect().forEach(System.out::println);
-                stringJavaRDD.collect().forEach(json -> processRfq(Rfq.fromJson(json)));
+            public void call(JavaRDD<Map<RfqMetadataFieldNames, Object>> metaRDD) throws Exception {
+                metaRDD.collect().forEach(new Consumer<Map<RfqMetadataFieldNames, Object>>() {
+                    @Override
+                    public void accept(Map<RfqMetadataFieldNames, Object> metaData) {
+//                        publishToKafka(new GsonBuilder().setPrettyPrinting().create().toJson(metaData),
+//                                1L,
+//                                "metadata_json3",
+//                                kafkaParamsOut);
+
+                    }
+                });
             }
         });
 
 
-        JavaDStream<String> ss = jsonStream.map(new Function<String, String>() {
-            @Override
-            public String call(String s) throws Exception {
-                return null;
-            }
-        });
+
+
+
+
+        //String outputTopic = "producerTopic";
+        //publishToKafka(key, wordCountMap.get(key), outputTopic);
+
+
+
+
+//        jsonStream.foreachRDD(new VoidFunction<JavaRDD<String>>() {
+//            @Override
+//            public void call(JavaRDD<String> stringJavaRDD) throws Exception {
+//                //stringJavaRDD.collect().forEach(System.out::println);
+//                stringJavaRDD.collect().forEach(json -> processRfq(Rfq.fromJson(json)));
+//            }
+//        });
+//
 
 
         //session.createDataFrame(ss.)
 
 
         //KafkaProducer<String, String> producer =
-
 
 
 
@@ -181,6 +255,38 @@ public class RfqProcessor {
         streamingContext.awaitTermination();
     }
 
+
+
+
+    public static void publishToKafka(String word, Long count, String topic, Map<String, Object> props) {
+        KafkaProducer<String, String> producer = new KafkaProducer<String, String>(props);
+        long time = System.currentTimeMillis();
+        try {
+            //ObjectMapper mapper = new ObjectMapper();
+            //String jsonInString = mapper.writeValueAsString(word + " " + count);
+            String event = word;
+            //log.info("Message to send to kafka : {}", event);
+            final ProducerRecord<String, String> record = new ProducerRecord<String, String>(topic, event);
+
+            RecordMetadata metadata = producer.send(record)
+                    .get();
+
+            long elapsedTime = System.currentTimeMillis() - time;
+            System.out.printf("sent record(key=%s value=%s) " +
+                            "meta(partition=%d, offset=%d) time=%d\n",
+                    record.key(), record.value(), metadata.partition(),
+                    metadata.offset(), elapsedTime);
+
+            log.info("Event : " + event + " published successfully to kafka!!");
+        } catch (Exception e) {
+            log.error("Problem while publishing the event to kafka : " + e.getMessage());
+        }
+        producer.flush();
+        producer.close();
+    }
+
+
+
     public void processRfq(Rfq rfq) {
         log.info(String.format("Received Rfq: %s", rfq.toString()));
 
@@ -206,6 +312,31 @@ public class RfqProcessor {
         //TODO: publish the metadata
         publisher.publishMetadata(metadata);
     }
+
+
+    public Map<RfqMetadataFieldNames, Object> fetchMeta(Rfq rfq) {
+        Map<RfqMetadataFieldNames, Object> metadata = new HashMap<>();
+
+        //metadata.put()
+        System.out.println("======== TRADES fetch meta =======");
+        System.out.println(trades);
+        System.out.println();
+        Map<RfqMetadataFieldNames, Object> extractorMetadata;
+
+        extractorMetadata = extractors.get(3).extractMetaData(rfq, session, trades);
+
+        return extractorMetadata;
+
+        //TODO: get metadata from each of the extractors
+//        for (RfqMetadataExtractor extractor : extractors) {
+//            extractorMetadata = extractor.extractMetaData(rfq, session, trades);
+//            extractorMetadata.forEach(metadata::putIfAbsent);
+//        }
+//
+//        return metadata;
+    }
+
+
 
 
 
@@ -250,7 +381,7 @@ public class RfqProcessor {
         Dataset<Row> metaSet = session.createDataFrame(list, structType);
 
         //metaSet.writeStream()
-        
+
 //        try {
 //            metaSet.writeStream()
 //                    .format("kafka")
