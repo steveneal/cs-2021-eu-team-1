@@ -25,18 +25,7 @@ public class TradeDataLoader {
 
     private final static Logger log = LoggerFactory.getLogger(TradeDataLoader.class);
 
-
-    /**
-     *
-     *
-     * TIMESTAMP: YYYY-MM-DD hh:mm:ss
-     * DATETYPE: YYYY-MM-DD
-     *
-     *
-     * @param session
-     * @param path
-     * @return
-     */
+    
     public Dataset<Row> loadTrades(SparkSession session, String path) {
         //TODO: create an explicit schema for the trade data in the JSON files
 
@@ -53,7 +42,6 @@ public class TradeDataLoader {
 
         //TODO: load the trades dataset
         Dataset<Row> trades = session.read().schema(schema).json(path);
-
         //TODO: log a message indicating number of records loaded and the schema used
         log.info("Data fetched: " + trades.count());
 
