@@ -64,7 +64,8 @@ public class RfqProcessor implements Serializable {
         this.streamingContext = streamingContext;
 
         //TODO: use the TradeDataLoader to load the trade data archives
-        this.trades = new TradeDataLoader().loadTrades(this.session, "src/test/resources/trades/trades.json");
+        this.trades = new TradeDataLoader().loadTrades(this.session,
+                "file:///C:/project/cs-2021-eu-team-1/spark-warehouse/trades.json");
 
 
         System.out.println("======= TRADES NULL ======");
