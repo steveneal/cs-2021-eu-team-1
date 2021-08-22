@@ -123,7 +123,7 @@ public class RfqProcessor implements Serializable {
                     @Override
                     public void accept(String s) {
                         publishToKafka(new GsonBuilder().setPrettyPrinting().create().toJson(fetchMeta(Rfq.fromJson(s))),
-                                "metadata_json3",
+                                "rfq-metadata",
                                 kafkaParamsOut);
                     }
                 });
