@@ -1,6 +1,7 @@
 package com.cs.rfq.decorator.extractors;
 
 import com.cs.rfq.decorator.Rfq;
+import jdk.nashorn.internal.runtime.regexp.joni.exception.ValueException;
 import org.apache.kafka.common.metrics.stats.Total;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
@@ -21,6 +22,7 @@ public class TotalTradesWithEntityExtractor implements RfqMetadataExtractor {
     public TotalTradesWithEntityExtractor(){
         this.since = DateTime.now().toString("yyyy-MM-dd");
     }
+
     @Override
     public Map<RfqMetadataFieldNames, Object> extractMetaData(Rfq rfq, SparkSession session, Dataset<Row> trades) {
 
@@ -49,6 +51,9 @@ public class TotalTradesWithEntityExtractor implements RfqMetadataExtractor {
     }
 
     public void setSince(String since){
+        if (!since.matches("\\d{4}-\\d{2}-\\d{2}")) {
+            throw new ValueException("Incorrect date format");
+        }
         this.since = since;
     }
 }

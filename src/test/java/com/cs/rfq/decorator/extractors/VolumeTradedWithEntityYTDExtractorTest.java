@@ -2,6 +2,7 @@ package com.cs.rfq.decorator.extractors;
 
 import com.cs.rfq.decorator.Rfq;
 import com.cs.rfq.decorator.TradeDataLoader;
+import jdk.nashorn.internal.runtime.regexp.joni.exception.ValueException;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 import org.junit.jupiter.api.BeforeEach;
@@ -10,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class VolumeTradedWithEntityYTDExtractorTest extends AbstractSparkUnitTest {
 
@@ -83,6 +85,12 @@ public class VolumeTradedWithEntityYTDExtractorTest extends AbstractSparkUnitTes
         Object result = meta.get(RfqMetadataFieldNames.volumeTradedYearToDate);
 
         assertEquals(0L, result);
+    }
+
+    @Test
+    public void testSetSinceException() {
+        VolumeTradedWithEntityYTDExtractor extractor = new VolumeTradedWithEntityYTDExtractor();
+        assertThrows(ValueException.class, () -> extractor.setSince("2-1-1"));
     }
 
 }

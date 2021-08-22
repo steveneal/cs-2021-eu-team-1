@@ -2,6 +2,7 @@ package com.cs.rfq.decorator.extractors;
 
 import com.cs.rfq.decorator.Rfq;
 import com.cs.rfq.decorator.TradeDataLoader;
+import jdk.nashorn.internal.runtime.regexp.joni.exception.ValueException;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 import org.junit.jupiter.api.BeforeEach;
@@ -11,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
 public class TradeSideBiasExtractorTest extends AbstractSparkUnitTest {
@@ -38,7 +40,13 @@ public class TradeSideBiasExtractorTest extends AbstractSparkUnitTest {
         Map<RfqMetadataFieldNames, Object> map = extractor.extractMetaData(rfq, session, trades);
         Object result = map.get(RfqMetadataFieldNames.buySellRatioPastWeek);
 
-        assertEquals("-1/-1", result);
+        assertEquals("500000/-1", result);
+    }
+
+    @Test
+    public void testSetSinceException() {
+        TradeSideBiasExtractor extractor = new TradeSideBiasExtractor();
+        assertThrows(ValueException.class, () -> extractor.setSince("2-1-1"));
     }
 
 }

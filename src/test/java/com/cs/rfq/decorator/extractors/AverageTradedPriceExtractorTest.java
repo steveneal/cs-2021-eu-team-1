@@ -2,14 +2,17 @@ package com.cs.rfq.decorator.extractors;
 
 import com.cs.rfq.decorator.Rfq;
 import com.cs.rfq.decorator.TradeDataLoader;
+import jdk.nashorn.internal.runtime.regexp.joni.exception.ValueException;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import sun.awt.SunHints;
 
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
 public class AverageTradedPriceExtractorTest extends AbstractSparkUnitTest {
@@ -62,6 +65,12 @@ public class AverageTradedPriceExtractorTest extends AbstractSparkUnitTest {
 
     }
 
+
+    @Test
+    public void testSetSinceException() {
+        AverageTradedPriceExtractor avgTradedPrice = new AverageTradedPriceExtractor();
+        assertThrows(ValueException.class, () -> avgTradedPrice.setSince("2-1-1"));
+    }
 
 }
 
