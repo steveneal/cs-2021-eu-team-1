@@ -8,6 +8,7 @@ import org.apache.spark.sql.Row;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.time.DateTimeException;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -90,7 +91,7 @@ public class VolumeTradedWithEntityYTDExtractorTest extends AbstractSparkUnitTes
     @Test
     public void testSetSinceException() {
         VolumeTradedWithEntityYTDExtractor extractor = new VolumeTradedWithEntityYTDExtractor();
-        assertThrows(ValueException.class, () -> extractor.setSince("2-1-1"));
+        assertThrows(DateTimeException.class, () -> extractor.setSince("2-1-1"));
     }
 
 }

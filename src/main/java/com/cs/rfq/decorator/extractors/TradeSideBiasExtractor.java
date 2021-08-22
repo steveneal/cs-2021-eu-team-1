@@ -1,13 +1,13 @@
 package com.cs.rfq.decorator.extractors;
 
 import com.cs.rfq.decorator.Rfq;
-import jdk.nashorn.internal.runtime.regexp.joni.exception.ValueException;
 import org.apache.spark.sql.Column;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SparkSession;
 import org.joda.time.DateTime;
 
+import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -88,7 +88,7 @@ public class TradeSideBiasExtractor implements RfqMetadataExtractor {
 
     public void setSince(String since){
         if (!since.matches("\\d{4}-\\d{2}-\\d{2}")) {
-            throw new ValueException("Incorrect date format");
+            throw new DateTimeException("Incorrect date format");
         }
         this.since = since;
     }

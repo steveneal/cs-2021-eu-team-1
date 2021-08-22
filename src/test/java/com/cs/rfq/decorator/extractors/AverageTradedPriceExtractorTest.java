@@ -9,6 +9,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import sun.awt.SunHints;
 
+import java.time.DateTimeException;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -69,7 +70,7 @@ public class AverageTradedPriceExtractorTest extends AbstractSparkUnitTest {
     @Test
     public void testSetSinceException() {
         AverageTradedPriceExtractor avgTradedPrice = new AverageTradedPriceExtractor();
-        assertThrows(ValueException.class, () -> avgTradedPrice.setSince("2-1-1"));
+        assertThrows(DateTimeException.class, () -> avgTradedPrice.setSince("2-1-1"));
     }
 
 }

@@ -8,6 +8,7 @@ import org.apache.spark.sql.Row;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.time.DateTimeException;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -44,7 +45,7 @@ public class InstrumentLiquidityExtractorTest extends AbstractSparkUnitTest {
     @Test
     public void testSetSinceException() {
         InstrumentLiquidityExtractor instLiquidExtractor = new InstrumentLiquidityExtractor();
-        assertThrows(ValueException.class, () -> instLiquidExtractor.setSince("2-1-1"));
+        assertThrows(DateTimeException.class, () -> instLiquidExtractor.setSince("2-1-1"));
     }
 
 }

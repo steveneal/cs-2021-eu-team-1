@@ -9,6 +9,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 
+import java.time.DateTimeException;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -46,7 +47,7 @@ public class TradeSideBiasExtractorTest extends AbstractSparkUnitTest {
     @Test
     public void testSetSinceException() {
         TradeSideBiasExtractor extractor = new TradeSideBiasExtractor();
-        assertThrows(ValueException.class, () -> extractor.setSince("2-1-1"));
+        assertThrows(DateTimeException.class, () -> extractor.setSince("2-1-1"));
     }
 
 }
