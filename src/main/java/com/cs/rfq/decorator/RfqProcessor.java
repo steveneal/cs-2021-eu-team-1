@@ -92,7 +92,7 @@ public class RfqProcessor implements Serializable {
         kafkaParams.put("auto.offset.reset", "latest");
         kafkaParams.put("enable.auto.commit", false);
 
-        Collection<String> topics = Arrays.asList("streams-plaintext-input");
+        Collection<String> topics = Arrays.asList("rfq-input");
 
         JavaInputDStream<ConsumerRecord<String, String>> stream =
                 KafkaUtils.createDirectStream(

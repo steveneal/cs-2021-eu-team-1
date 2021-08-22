@@ -51,13 +51,13 @@ public class AverageTradedPriceExtractorTest extends AbstractSparkUnitTest {
         Map<RfqMetadataFieldNames, Object> map = avgTradedPrice.extractMetaData(rfq, session, trades);
         Object result = map.get(RfqMetadataFieldNames.averageTradedPricePastWeek);
 
-        assertEquals(0L, result);
+        assertEquals(0.0, result);
     }
 
 
     @Test
     public void testAveragePriceWhenOnlyOneRecordIsMatched() {
-        avgTradedPrice.setSince("2021-08-05");
+        avgTradedPrice.setSince("2021-08-11");
 
         Map<RfqMetadataFieldNames, Object> map = avgTradedPrice.extractMetaData(rfq, session, trades);
         Object result = map.get(RfqMetadataFieldNames.averageTradedPricePastWeek);
