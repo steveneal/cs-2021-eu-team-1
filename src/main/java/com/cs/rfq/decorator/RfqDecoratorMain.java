@@ -18,7 +18,9 @@ public class RfqDecoratorMain {
         //TODO: create a Spark streaming context
         JavaStreamingContext jssc = new JavaStreamingContext(conf, Durations.seconds(5));
 
-        jssc.checkpoint("/tmp/henrik/checkpoint");
+
+        // might utilize this in the future
+        //jssc.checkpoint("/tmp/henrik/checkpoint");
 
         //TODO: create a Spark session
         SparkSession session = SparkSession.builder().config(conf).getOrCreate();
