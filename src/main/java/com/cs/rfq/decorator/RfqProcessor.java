@@ -25,7 +25,14 @@ import org.apache.spark.streaming.kafka010.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
 import scala.Serializable;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -66,6 +73,7 @@ public class RfqProcessor implements Serializable {
 
     public void startSocketListener() throws InterruptedException {
         //TODO: stream data from the input socket on localhost:9000
+
         //JavaDStream<String> lines = streamingContext.socketTextStream("localhost",9000);
 
 
@@ -119,8 +127,6 @@ public class RfqProcessor implements Serializable {
         //TODO: convert each incoming line to a Rfq object and call processRfq method with it
 
         //TODO: start the streaming context
-        streamingContext.start();
-        streamingContext.awaitTermination();
     }
 
 
@@ -167,11 +173,8 @@ public class RfqProcessor implements Serializable {
 
         //TODO: add RFQ id tp meta data
 
-//        JavaRDD row
-//        StructSchema
-        //session.createDataFrame()
-
         //TODO: publish the metadata
+
         publisher.publishMetadata(metadata);
     }
 
@@ -181,16 +184,6 @@ public class RfqProcessor implements Serializable {
 
         Map<RfqMetadataFieldNames, Object> extractorMetadata;
 
-        //this.trades = new TradeDataLoader().loadTrades(this.session, "src/test/resources/trades/trades.json");
-//        extractorMetadata = extractors.get(1).extractMetaData(rfq, session, trades);
-
-//        metadata.put(RfqMetadataFieldNames.volumeTradedWeekToDate, 135L);
-//        metadata.put(RfqMetadataFieldNames.volumeTradedMonthToDate, 12L);
-//        metadata.put(RfqMetadataFieldNames.volumeTradedYearToDate, 12323L);
-
-//        return metadata;
-
-//        return extractorMetadata;
 
         //TODO: get metadata from each of the extractors
         for (RfqMetadataExtractor extractor : extractors) {
@@ -199,6 +192,8 @@ public class RfqProcessor implements Serializable {
         }
 //
         return metadata;
+
+
     }
 
 

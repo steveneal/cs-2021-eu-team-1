@@ -18,11 +18,14 @@ public class RfqDecoratorMain {
 
 
         //TODO: create a Spark configuration and set a sensible app name
+
         SparkConf conf = new SparkConf().setAppName("RFQDecorator");
 
         //TODO: create a Spark streaming context
         JavaStreamingContext jssc = new JavaStreamingContext(conf, Durations.seconds(5));
 
+
+        //TODO: create a Spark session
 
         // might utilize this in the future
         //jssc.checkpoint("/tmp/henrik/checkpoint");
@@ -33,6 +36,7 @@ public class RfqDecoratorMain {
         //TODO: create a new RfqProcessor and set it listening for incoming RFQs
         RfqProcessor processor = new RfqProcessor(session, jssc, args[0]);
         processor.startSocketListener();
+
     }
 
 }
