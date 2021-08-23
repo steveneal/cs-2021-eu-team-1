@@ -26,13 +26,13 @@ public class GenerateDummyTrades {
     private static final String instruments_file = "src/test/resources/trades/instrument-static.csv";
 
     //output trade reports file:
-    private static final String trades_file = "src/test/resources/trades/trades.json";
+    private static final String trades_file = "src/test/resources/trades/trades_dummies.json";
 
     //variables:
-    private static final int counterparties_limit = 10;
-    private static final int instruments_limit = 10;
+    private static final int counterparties_limit = 50;
+    private static final int instruments_limit = 50;
     private static final int trades_min = 1;
-    private static final int trades_max = 15;
+    private static final int trades_max = 100;
 
     public static void main(String[] args) throws Exception {
 
