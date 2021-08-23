@@ -10,26 +10,18 @@ import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
-import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.common.serialization.StringDeserializer;
 
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.apache.spark.api.java.JavaRDD;
-import org.apache.spark.api.java.function.Function;
 import org.apache.spark.api.java.function.VoidFunction;
-import org.apache.spark.rdd.RDD;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
-import org.apache.spark.sql.RowFactory;
 import org.apache.spark.sql.SparkSession;
-import org.apache.spark.sql.streaming.StreamingQueryException;
-import org.apache.spark.sql.types.*;
 import org.apache.spark.streaming.api.java.JavaDStream;
 import org.apache.spark.streaming.api.java.JavaInputDStream;
-import org.apache.spark.streaming.api.java.JavaPairDStream;
 import org.apache.spark.streaming.api.java.JavaStreamingContext;
 import org.apache.spark.streaming.kafka010.*;
-import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,18 +45,15 @@ public class RfqProcessor implements Serializable {
     private final MetadataPublisher publisher = new MetadataJsonLogPublisher();
 
 
-    public RfqProcessor(SparkSession session, JavaStreamingContext streamingContext) {
+    public RfqProcessor(SparkSession session, JavaStreamingContext streamingContext, String tradeHistoryPath) {
         this.session = session;
         this.streamingContext = streamingContext;
 
         //TODO: use the TradeDataLoader to load the trade data archives
+
         this.trades = new TradeDataLoader().loadTrades(this.session,
-                "file:///C:/project/cs-2021-eu-team-1/spark-warehouse/trades.json");
+                tradeHistoryPath);
 
-
-        System.out.println("======= TRADES NULL ======");
-        System.out.println(trades);
-        System.out.println();
 
         //TODO: take a close look at how these two extractors are implemented
         extractors.add(new RfqIdExtractor());
