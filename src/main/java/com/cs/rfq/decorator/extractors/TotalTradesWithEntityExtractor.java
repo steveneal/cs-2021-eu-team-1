@@ -39,7 +39,7 @@ public class TotalTradesWithEntityExtractor implements RfqMetadataExtractor {
                 .filter(trades.col("EntityId").equalTo(rfq.getEntityId()));
 
 
-        long tradesToday = filtered.filter(trades.col("TradeDate").$greater(new java.sql.Date(todayMs))).count();
+        long tradesToday = filtered.filter(trades.col("TradeDate").$eq$eq$eq(new java.sql.Date(todayMs))).count();
         long tradesPastWeek = filtered.filter(trades.col("TradeDate").$greater(new java.sql.Date(pastWeekMs))).count();
         long tradesPastYear = filtered.filter(trades.col("TradeDate").$greater(new java.sql.Date(pastYearMs))).count();
 

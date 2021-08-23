@@ -1,12 +1,6 @@
 package com.cs.rfq.decorator;
 
-import com.cs.rfq.decorator.extractors.RfqMetadataExtractor;
-import com.cs.rfq.decorator.extractors.RfqMetadataFieldNames;
-import com.cs.rfq.decorator.extractors.TotalTradesWithEntityExtractor;
-import com.cs.rfq.decorator.extractors.VolumeTradedWithEntityYTDExtractor;
-import com.cs.rfq.decorator.extractors.InstrumentLiquidityExtractor;
-import com.cs.rfq.decorator.extractors.AverageTradedPriceExtractor;
-import com.cs.rfq.decorator.extractors.TradeSideBiasExtractor;
+import com.cs.rfq.decorator.extractors.*;
 import com.cs.rfq.decorator.publishers.MetadataJsonLogPublisher;
 import com.cs.rfq.decorator.publishers.MetadataPublisher;
 
@@ -73,6 +67,7 @@ public class RfqProcessor implements Serializable {
         System.out.println();
 
         //TODO: take a close look at how these two extractors are implemented
+        extractors.add(new RfqIdExtractor());
         extractors.add(new TotalTradesWithEntityExtractor());
         extractors.add(new VolumeTradedWithEntityYTDExtractor());
         extractors.add(new InstrumentLiquidityExtractor());
